@@ -1,4 +1,5 @@
 """This module implements the joint velocity constraint."""
+import logging
 import numpy as np
 from toppra._CythonUtils import (_create_velocity_constraint,
                                  _create_velocity_constraint_varying)
@@ -45,7 +46,7 @@ class JointVelocityConstraint(LinearConstraint):
             raise ValueError(
                 "Wrong dimension: constraint dof ({:d}) not equal to path dof ({:d})"
                 .format(self.get_dof(), path.dof))
-        qs = path(gridpoints, 1)
+        qs = path(gridpoints, 1)   # [len(gridpoints), dof], \frac{\mathrm{d} \theta}{\mathrm{d} s}
         _, _, xbound_ = _create_velocity_constraint(qs, self.vlim)
         xbound = np.array(xbound_)
         xbound[:, 0] = xbound_[:, 1]
@@ -80,6 +81,7 @@ class JointVelocityConstraintVarying(LinearConstraint):
                 .format(self.get_dof(), path.dof))
         qs = path((gridpoints), 1)
         vlim_grid = np.array([self.vlim_func(s) for s in gridpoints])
+        # logging.info('vlim_grid: {}'.format(vlim_grid))
         _, _, xbound_ = _create_velocity_constraint_varying(qs, vlim_grid)
         xbound = np.array(xbound_)
         xbound[:, 0] = xbound_[:, 1]

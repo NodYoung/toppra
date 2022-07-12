@@ -49,7 +49,7 @@ cpdef _create_velocity_constraint(np.ndarray[double, ndim=2] qs,
         sdmax = MAXSD
         for k in range(dof):
             if qs[i, k] > 0:
-                sdmax = float64_min(vlim[k, 1] / qs[i, k], sdmax)
+                sdmax = float64_min(vlim[k, 1] / qs[i, k], sdmax)   # \frac{\mathrm{d} s}{\mathrm{d} t} = \frac{\mathrm{d} \theta}{\mathrm{d} t} / \frac{\mathrm{d} \theta}{\mathrm{d} s}
                 sdmin = float64_max(vlim[k, 0] / qs[i, k], sdmin)
             elif qs[i, k] < 0:
                 sdmax = float64_min(vlim[k, 0] / qs[i, k], sdmax)

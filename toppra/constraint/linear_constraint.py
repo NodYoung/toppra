@@ -17,7 +17,8 @@ class LinearConstraint(Constraint):
         \mathbf F_i v &\\leq \mathbf g_i, \\\\
         x^{bound}_{i, 0} \\leq x &\\leq x^{bound}_{i, 1}, \\\\
         u^{bound}_{i, 0} \\leq u &\\leq u^{bound}_{i, 1}.
-
+      这里的v即约束量，可以是关节速度(JointVelocityConstraint)、关节加速度(JointAccelerationConstraint)或关节力矩(JointTorqueConstraint);
+      u为路径加速度\frac{\mathrm{d^2} s}{\mathrm{d} t^2}，x为路径速度平方\frac{\mathrm{d} s}{\mathrm{d} t} ^2
     Alternatively, if :math:`\mathbf F_i` is constant for all values
     of :math:`i`, then we can consider the simpler constraint:
 
@@ -76,6 +77,7 @@ class LinearConstraint(Constraint):
             Shape (N + 1, 2). See notes.
         xbound: np.ndarray or None
             Shape (N + 1, 2). See notes.
+        N+1为离散点个数，m为机械臂关节个数，k为约束个数
 
         """
         raise NotImplementedError

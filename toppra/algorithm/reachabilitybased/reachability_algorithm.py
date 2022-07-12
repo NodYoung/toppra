@@ -165,7 +165,7 @@ class ReachabilityAlgorithm(ParameterizationAlgorithm):
 
     def compute_controllable_sets(self, sdmin, sdmax):
         """Compute the sets of controllable squared path velocities.
-
+        对应论文Algorithm 1: TOPP-RA的Backward pass
         Parameters
         ----------
         sdmin: float
@@ -239,7 +239,7 @@ class ReachabilityAlgorithm(ParameterizationAlgorithm):
 
     def compute_parameterization(self, sd_start, sd_end, return_data=False):
         """Compute a path parameterization.
-
+        对应论文Algorithm 1
         If fail, whether because there is no valid parameterization or
         because of numerical error, the arrays returns should contain
         np.nan.
@@ -274,7 +274,7 @@ class ReachabilityAlgorithm(ParameterizationAlgorithm):
                 "Negative path velocities: path velocities must be positive: (%s, %s)"
                 % (sd_start, sd_end)
             )
-        K = self.compute_controllable_sets(sd_end, sd_end)
+        K = self.compute_controllable_sets(sd_end, sd_end)  # Backward pass
         if np.isnan(K).any():
             logger.warning(
                 "An error occurred when computing controllable velocities. "

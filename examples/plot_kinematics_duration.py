@@ -31,12 +31,12 @@ path = ta.SplineInterpolator(np.linspace(0, 1, 5), way_pts)
 ################################################################################
 # Create velocity bounds, then velocity constraint object
 vlim_ = np.random.rand(dof) * 20
-vlim = np.vstack((-vlim_, vlim_)).T
+vlim = np.vstack((-vlim_, vlim_)).T   # [dof, 2], \frac{\mathrm{d} \theta}{\mathrm{d} t}
 
 ################################################################################
 # Create acceleration bounds, then acceleration constraint object
 alim_ = np.random.rand(dof) * 2
-alim = np.vstack((-alim_, alim_)).T
+alim = np.vstack((-alim_, alim_)).T   # [dof, 2], \frac{\mathrm{d^2} \theta}{\mathrm{d} t^2}
 pc_vel = constraint.JointVelocityConstraint(vlim)
 pc_acc = constraint.JointAccelerationConstraint(
     alim, discretization_scheme=constraint.DiscretizationType.Interpolation)

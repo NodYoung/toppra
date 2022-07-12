@@ -69,8 +69,8 @@ class JointAccelerationConstraint(LinearConstraint):
                     self.dof, path.dof
                 )
             )
-        ps_vec = (path(gridpoints, order=1)).reshape((-1, path.dof))
-        pss_vec = (path(gridpoints, order=2)).reshape((-1, path.dof))
+        ps_vec = (path(gridpoints, order=1)).reshape((-1, path.dof))  # [len(gridpoints), dof], \frac{\mathrm{d} \theta}{\mathrm{d} s}
+        pss_vec = (path(gridpoints, order=2)).reshape((-1, path.dof))  # \frac{\mathrm{d^2} \theta}{\mathrm{d} s^2}
         dof = path.dof
         F_single = np.zeros((dof * 2, dof))
         g_single = np.zeros(dof * 2)

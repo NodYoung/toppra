@@ -95,7 +95,7 @@ class JointTorqueConstraint(LinearConstraint):
         F[0:dof, :] = I_dof
         F[dof:, :] = -I_dof
 
-        c = np.array([self.inv_dyn(p_, v_zero, v_zero) for p_ in p])
+        c = np.array([self.inv_dyn(p_, v_zero, v_zero) for p_ in p])   # 重力
         a = np.array([self.inv_dyn(p_, v_zero, ps_) for p_, ps_ in zip(p, ps)]) - c
         b = (
             np.array([self.inv_dyn(p_, ps_, pss_) for p_, ps_, pss_ in zip(p, ps, pss)])

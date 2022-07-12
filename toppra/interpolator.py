@@ -422,11 +422,11 @@ class SplineInterpolator(AbstractGeometricPath):
 
     def __call__(self, path_positions, order=0):
         if order == 0:
-            return self.cspl(path_positions)
+            return self.cspl(path_positions)  # \theta
         if order == 1:
-            return self.cspld(path_positions)
+            return self.cspld(path_positions)  # \frac{\mathrm{d} \theta}{\mathrm{d} s} 
         if order == 2:
-            return self.cspldd(path_positions)
+            return self.cspldd(path_positions)  # \frac{\mathrm{d^2} \theta}{\mathrm{d} s^2} 
         raise ValueError(f"Invalid order {order}")
 
     @property

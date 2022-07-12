@@ -185,7 +185,7 @@ class ParametrizeSpline(SplineInterpolator):
         t_grid = np.delete(t_grid, skip_ent)
         gridpoints = np.delete(gridpoints, skip_ent)
         q_grid = path(gridpoints)
-
+        logging.info('t_grid={}'.format(t_grid))
         super(ParametrizeSpline, self).__init__(
             t_grid,
             q_grid,
