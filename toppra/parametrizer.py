@@ -53,15 +53,8 @@ class ParametrizeConstAccel(AbstractGeometricPath):
         ts = [0]
         us = []
         for i in range(self._ss.shape[0] - 1):
-            us.append(
-                0.5 * (self._xs[i + 1] - self._xs[i]) / (self._ss[i + 1] - self._ss[i])
-            )
-            ts.append(
-                ts[-1]
-                + 2
-                * (self._ss[i + 1] - self._ss[i])
-                / (self._velocities[i] + self._velocities[i + 1])
-            )
+            us.append(0.5*(self._xs[i + 1]-self._xs[i])/(self._ss[i + 1]-self._ss[i]))  # 对应toppra论文公式(10)，即匀加速运动\ddot{s}_i=0.5*(\dot{s}_{i+1}^2-\dot{s}_i^2)/(s_{i+1}-s_i)
+            ts.append(ts[-1]+2*(self._ss[i + 1]-self._ss[i])/(self._velocities[i]+self._velocities[i+1])) # 匀加速运动t_{i+1}-t_i=(s_{i+1}-s_i)/(0.5*(\dot{s}_{i+1}-\dot{s}_i))
         self._ts = np.array(ts)
         self._us = np.array(us)
 
@@ -86,10 +79,10 @@ class ParametrizeConstAccel(AbstractGeometricPath):
         if order == 0:
             out = self._path(ss)
         elif order == 1:
-            out = np.multiply(self._path(ss, 1), vs[:, np.newaxis])
+            out = np.multiply(self._path(ss, 1), vs[:, np.newaxis]) # \dot{q}=\frac{\mathrm{d} q}{\mathrm{d} s} * \dot{s}
         elif order == 2:
             out = (np.multiply(self._path(ss, 2), vs[:, np.newaxis] ** 2) +
-                   np.multiply(self._path(ss, 1), us[:, np.newaxis]))
+                   np.multiply(self._path(ss, 1), us[:, np.newaxis])) # 
         else:
             raise ToppraError(f"Order {order} is not supported.")
         if scalar:
@@ -121,11 +114,7 @@ class ParametrizeConstAccel(AbstractGeometricPath):
             dt = t - self._ts[idx]
             us.append(self._us[idx])
             vs.append(self._velocities[idx] + dt * self._us[idx])
-            ss.append(
-                self._ss[idx]
-                + dt * self._velocities[idx]
-                + 0.5 * dt ** 2 * self._us[idx]
-            )
+            ss.append(self._ss[idx]+dt*self._velocities[idx]+0.5*dt**2 * self._us[idx])
         return np.array(ss), np.array(vs), np.array(us)
 
     def plot_parametrization(self, show: bool = False, n_sample: int = 500) -> None:

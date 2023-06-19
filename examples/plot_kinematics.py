@@ -6,15 +6,17 @@ path subject to kinematic constraints. This is very simple to do with
 `toppra`, as we shall see below. First import the library.
 
 """
-
+import os, sys
+sys.path.insert(0, os.path.join('..'))
 import toppra as ta
 import toppra.constraint as constraint
 import toppra.algorithm as algo
 import numpy as np
 import matplotlib.pyplot as plt
 import time
+import logging
 
-ta.setup_logging("INFO")
+ta.setup_logging("DEBUG")
 
 ################################################################################
 # We generate a path with some random waypoints.

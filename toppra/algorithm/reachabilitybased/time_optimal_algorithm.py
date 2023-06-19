@@ -80,7 +80,7 @@ class TOPPRA(ReachabilityAlgorithm):
         nV = self.solver_wrapper.get_no_vars()
         g_upper = np.zeros(nV)
         g_upper[1] = -1
-        g_upper[0] = -2 * self.solver_wrapper.get_deltas()[i]
+        g_upper[0] = -2 * self.solver_wrapper.get_deltas()[i] # 令2*delta*u+x最大
 
         # Account for propagating numerical errors
         K_next_max = K_next[1]

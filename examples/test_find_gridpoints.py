@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 def setup_path(param):
   start, end = param
   waypoints = [[0, 0.3, 0.5], [1, 2, 3], [0.0, 0.1, 0.2], [0, 0.5, 0]]
-  ss = np.linspace(start, end, len(waypoints))
+  ss = np.linspace(start, end, len(waypoints))  # ss=[0., 0.33333333, 0.66666667, 1.]
   path = toppra.interpolator.SplineInterpolator(ss, waypoints)
   return path, waypoints
 
@@ -25,9 +25,13 @@ def test_basic_usage():
   # # visualize ###############################################################
   ss_full = np.linspace(path.path_interval[0], path.path_interval[1], 100)
   for i in range(len(waypoints[0])):
-      plt.plot(ss_full, path(ss_full)[:, i], '--', c='C%d' % i)
-      plt.plot(gridpoints_ept, path(gridpoints_ept)[:, i], '-o', c='C%d' % i)
-  plt.show()
+    plt.plot(ss_full, path(ss_full)[:, i], '-', c='C%d' % i, linewidth=0.5, label='%d' % i)
+    plt.plot(gridpoints_ept, path(gridpoints_ept)[:, i], 'o', c='C%d' % i, markersize=1)
+    plt.plot(path.waypoints[0], path.waypoints[1][:, i], '.', c='C%d' % i, markersize=5)
+  plt.legend()
+  plt.grid(True)
+  # plt.show()
+  plt.savefig('test_find_gridpoints-basic_usage.png', dpi = 800)
 
 
 if __name__ == '__main__':

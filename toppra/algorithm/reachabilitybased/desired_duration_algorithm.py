@@ -141,7 +141,7 @@ class TOPPRAsd(ReachabilityAlgorithm):
             logger.debug("[Forward pass] u_{:d} = {:f}, x_{:d} = {:f}".format(i, us_slow[i], i + 1, xs_slow[i + 1]))
         self.solver_wrapper.close_solver()
 
-        # desired parametrization xs_desired = alpha * xs + (1 - alpha) / xs_slow
+        # desired parametrization xs_desired = alpha * xs + (1 - alpha) / xs_slow 分别求出最快时间和最慢时间，然后做二分线性插值
         duration = _compute_duration(xs, deltas)
         duration_slow = _compute_duration(xs_slow, deltas)
         if duration > self.desired_duration:

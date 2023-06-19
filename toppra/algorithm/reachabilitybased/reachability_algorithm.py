@@ -203,7 +203,7 @@ class ReachabilityAlgorithm(ParameterizationAlgorithm):
 
     def _one_step(self, i, K_next):
         """Perform the one-step operation.
-
+        对应论文公式13
         Parameters
         ----------
         i: int
