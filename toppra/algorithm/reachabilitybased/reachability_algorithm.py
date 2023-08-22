@@ -130,7 +130,7 @@ class ReachabilityAlgorithm(ParameterizationAlgorithm):
 
     def compute_feasible_sets(self):
         """Compute the sets of feasible squared velocities.
-
+          计算admissible states
         Returns
         -------
         X: array
@@ -150,7 +150,7 @@ class ReachabilityAlgorithm(ParameterizationAlgorithm):
         for i in range(self._N + 1):
             X[i, 0] = self.solver_wrapper.solve_stagewise_optim(
                 i, Hzero, g_lower, -CVXPY_MAXX, CVXPY_MAXX, -CVXPY_MAXX, CVXPY_MAXX
-            )[1]
+            )[1]  # min [ui, xi]*[1e-9, 1]'; s.t. ux满足各种constraints
             X[i, 1] = self.solver_wrapper.solve_stagewise_optim(
                 i, Hzero, -g_lower, -CVXPY_MAXX, CVXPY_MAXX, -CVXPY_MAXX, CVXPY_MAXX
             )[1]
@@ -230,7 +230,7 @@ class ReachabilityAlgorithm(ParameterizationAlgorithm):
         g_upper[1] = -1
         x_upper = self.solver_wrapper.solve_stagewise_optim(
             i, None, g_upper, np.nan, np.nan, K_next[0], K_next[1]
-        )[1]
+        )[1]  # min [ui, xi]*[1e-9, -1]'; s.t. K_next[0] <= xi+2*delta*ui <= K_next[1]且ux满足各种constraints
         x_lower = self.solver_wrapper.solve_stagewise_optim(
             i, None, -g_upper, np.nan, np.nan, K_next[0], K_next[1]
         )[1]
@@ -274,7 +274,7 @@ class ReachabilityAlgorithm(ParameterizationAlgorithm):
                 "Negative path velocities: path velocities must be positive: (%s, %s)"
                 % (sd_start, sd_end)
             )
-        K = self.compute_controllable_sets(sd_end, sd_end)  # Backward pass
+        K = self.compute_controllable_sets(sd_end, sd_end)  # Backward pass计算controllable sets, K[N+1, :]=[x_lower, x_upper]
         if np.isnan(K).any():
             logger.warning(
                 "An error occurred when computing controllable velocities. "
@@ -311,7 +311,7 @@ class ReachabilityAlgorithm(ParameterizationAlgorithm):
         self.solver_wrapper.setup_solver()
         i = 0
         while i < self._N:
-            optim_res = self._forward_step(i, xs[i], K[i + 1])
+            optim_res = self._forward_step(i, xs[i], K[i + 1])  # 已知当前步x_cur和下一步[x_next_min, x_next_max]，前向计算得到u*_cur使下一步x_next尽量大
             if np.isnan(optim_res[0]):
                 # NOTE: This case happens because the constraint
                 # K[i + 1, 0] <= x[i] + 2D u[i] <= K[i + 1, 1]
@@ -391,7 +391,7 @@ class ReachabilityAlgorithm(ParameterizationAlgorithm):
 
         opt_1 = self.solver_wrapper.solve_stagewise_optim(
             i, None, g_upper, L_current[0], L_current[1], x_next_min, x_next_max
-        )
+        ) # min [ui, xi]*[-2*delta, -1]'; s.t. L_current[0]<=xi<=L_current[1], K_next[0]<=xi+2*delta*ui<=K_next[1]且ux满足各种constraints
         x_opt_1 = opt_1[1]
         u_opt_1 = opt_1[0]
         x_upper = x_opt_1 + 2 * deltas * u_opt_1
@@ -407,6 +407,9 @@ class ReachabilityAlgorithm(ParameterizationAlgorithm):
         return res
 
     def compute_reachable_sets(self, sdmin, sdmax):
+        '''计算reachable_sets, 
+          sdmin和sdmax为起点速度
+        '''
         assert sdmin <= sdmax and 0 <= sdmin
         feasible_sets = self.compute_feasible_sets()
         L = np.zeros((self._N + 1, 2))

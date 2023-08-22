@@ -17,8 +17,7 @@ class LinearConstraint(Constraint):
         \mathbf F_i v &\\leq \mathbf g_i, \\\\
         x^{bound}_{i, 0} \\leq x &\\leq x^{bound}_{i, 1}, \\\\
         u^{bound}_{i, 0} \\leq u &\\leq u^{bound}_{i, 1}.
-      这里的v即约束量，可以是关节速度(JointVelocityConstraint)、关节加速度(JointAccelerationConstraint)或关节力矩(JointTorqueConstraint);
-      u为路径加速度\frac{\mathrm{d^2} s}{\mathrm{d} t^2}，x为路径速度平方\frac{\mathrm{d} s}{\mathrm{d} t} ^2
+      
     Alternatively, if :math:`\mathbf F_i` is constant for all values
     of :math:`i`, then we can consider the simpler constraint:
 
@@ -78,7 +77,13 @@ class LinearConstraint(Constraint):
         xbound: np.ndarray or None
             Shape (N + 1, 2). See notes.
         N+1为离散点个数，m为机械臂关节个数，k为约束个数
-
+        a_i*u + b_i*x + c_i = v
+                     F_i*v <= g_i
+        ubound_{i, 0} <= u <= ubound_{i, 1}
+        xbound_{i, 0} <= x <= xbound_{i, 1}
+        u为路径加速度\frac{\mathrm{d^2} s}{\mathrm{d} t^2}，x为路径速度平方\frac{\mathrm{d} s}{\mathrm{d} t} ^2;
+        v即约束量，可以是关节速度(JointVelocityConstraint)、关节加速度(JointAccelerationConstraint)或关节力矩(JointTorqueConstraint),
+        把前两式连立起来，F_i*(a_i*u + b_i*x + c_i) <= g_i. 参见:cvxpyWrapper
         """
         raise NotImplementedError
 

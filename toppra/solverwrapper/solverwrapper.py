@@ -1,6 +1,8 @@
 """This module provides different solverwrapper implementations."""
 import logging
 import numpy as np
+from constraint import Constraint
+from typing import List
 
 logger = logging.getLogger(__name__)
 
@@ -80,7 +82,7 @@ class SolverWrapper(object):
 
     """
 
-    def __init__(self, constraint_list, path, path_discretization):
+    def __init__(self, constraint_list:List[Constraint], path, path_discretization):
         # Main attributes
         self.constraints = constraint_list
         self.path = path

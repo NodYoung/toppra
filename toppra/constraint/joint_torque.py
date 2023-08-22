@@ -12,7 +12,7 @@ class JointTorqueConstraint(LinearConstraint):
         A(q) \ddot q + \dot q^\\top B(q) \dot q + C(q) + D( \dot q )= w,
 
     where w is a vector that satisfies the polyhedral constraint:
-
+      D为摩擦项
     .. math::
         F(q) w \\leq g(q).
 

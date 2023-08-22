@@ -100,7 +100,7 @@ class TOPPRAsd(ReachabilityAlgorithm):
 
         self.solver_wrapper.setup_solver()
         for i in range(self._N):
-            optim_res = self._forward_step(i, xs[i], K[i + 1])
+            optim_res = self._forward_step(i, xs[i], K[i + 1])  # 尽量使下一步速度最大
             if np.isnan(optim_res[0]):
                 logger.fatal("A numerical error occurs: The instance is controllable "
                              "but forward pass fails.")
@@ -124,7 +124,7 @@ class TOPPRAsd(ReachabilityAlgorithm):
 
         self.solver_wrapper.setup_solver()
         for i in range(self._N):
-            optim_res = self._forward_step(i, xs_slow[i], K[i + 1], slow=True)
+            optim_res = self._forward_step(i, xs_slow[i], K[i + 1], slow=True)  # 尽量使下一步速度最小
             if np.isnan(optim_res[0]):
                 logger.fatal("A numerical error occurs: The instance is controllable "
                              "but forward pass fails.")

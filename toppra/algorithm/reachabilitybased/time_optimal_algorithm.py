@@ -88,5 +88,5 @@ class TOPPRA(ReachabilityAlgorithm):
 
         optim_var = self.solver_wrapper.solve_stagewise_optim(
             i, None, g_upper, x, x, K_next_min, K_next_max
-        )
+        ) # min [ui, xi]*[-2*delta, -1]'; s.t. x<=xi<=x, K_next_min<=xi+2*delta*ui<=K_next_max, 且ux满足各种constraints
         return optim_var

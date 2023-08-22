@@ -16,13 +16,13 @@ class JointAccelerationConstraint(LinearConstraint):
                                                     &\leq \ddot{\mathbf{q}}_{max} \\\\
                 \ddot{\mathbf{q}}_{min} & \leq \mathbf{q}'(s_i) u_i + \mathbf{q}''(s_i) x_i
                                                     &\leq \ddot{\mathbf{q}}_{max}
-
+        qdd_min <= qdd <= qdd_max, qdd_min<=qdot_i*u_i+qddot*x_i<=qdd_max
     where :math:`u_i, x_i` are respectively the path acceleration and
     path velocity square at :math:`s_i`. For more detail see :ref:`derivationKinematics`.
 
     Rearranging the above pair of vector inequalities into the form
     required by :class:`LinearConstraint`, we have:
-
+    转换为a_i=qdot_i, b_i=qddot_i, F=[1, -1], h=[qdd_max, qdd_min]
     - :code:`a[i]` := :math:`\mathbf q'(s_i)`
     - :code:`b[i]` := :math:`\mathbf q''(s_i)`
     - :code:`F` := :math:`[\mathbf{I}, -\mathbf I]^T`

@@ -80,7 +80,7 @@ def propose_gridpoints(
     max_iteration: int
       Maximum number of iterations.
     max_seg_length: float
-      All segments length should be smaller than this value.
+      All segments length should be smaller than this value. 所有的线段弧长Δs都应该比这个值小
 
     Returns
     ----------
