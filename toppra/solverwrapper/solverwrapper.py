@@ -1,7 +1,7 @@
 """This module provides different solverwrapper implementations."""
 import logging
 import numpy as np
-from constraint import Constraint
+from ..constraint import Constraint
 from typing import List
 
 logger = logging.getLogger(__name__)
@@ -29,7 +29,7 @@ def available_solvers(output_msg=True):
     except ImportError as err:
         IMPORT_CVXPY = False
     solver_availability = (
-        ("seidel", True),
+        # ("seidel", True),
         ("hotqpoases", IMPORT_QPOASES),
         ("qpoases", IMPORT_QPOASES),
         ("ecos", IMPORT_ECOS),

@@ -88,7 +88,7 @@ class ReachabilityAlgorithm(ParameterizationAlgorithm):
                 "qpoases",
                 "ecos",
                 "hotqpoases",
-                "seidel",
+                # "seidel",
             ], "Solver {:} not found".format(solver_wrapper)
 
         if solver_wrapper.lower() == "cvxpy":
@@ -117,12 +117,12 @@ class ReachabilityAlgorithm(ParameterizationAlgorithm):
             self.solver_wrapper = ecosWrapper(
                 self.constraints, self.path, self.gridpoints
             )
-        elif solver_wrapper.lower() == "seidel":
-            from toppra.solverwrapper.cy_seidel_solverwrapper import seidelWrapper
+        # elif solver_wrapper.lower() == "seidel":
+        #     from toppra.solverwrapper.cy_seidel_solverwrapper import seidelWrapper
 
-            self.solver_wrapper = seidelWrapper(
-                self.constraints, self.path, self.gridpoints, solve_lp1d=True
-            )
+        #     self.solver_wrapper = seidelWrapper(
+        #         self.constraints, self.path, self.gridpoints, solve_lp1d=True
+        #     )
         else:
             raise NotImplementedError(
                 "Solver wrapper {:} not found!".format(solver_wrapper)

@@ -6,6 +6,9 @@ Retime a path to a specific duration
 # `toppra` allows user to parametrize a path to a specific duration
 # while still satisfy constraints. We will see how to do this in this
 # example. First, import necessary libraries.
+import sys, os
+# sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
+sys.path.insert(0, os.path.join('..'))
 import toppra as ta
 import toppra.constraint as constraint
 import toppra.algorithm as algo

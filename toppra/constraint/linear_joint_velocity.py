@@ -1,9 +1,87 @@
 """This module implements the joint velocity constraint."""
 import logging
 import numpy as np
-from toppra._CythonUtils import (_create_velocity_constraint,
-                                 _create_velocity_constraint_varying)
+# from toppra._CythonUtils import (_create_velocity_constraint,
+#                                  _create_velocity_constraint_varying)
 from .linear_constraint import LinearConstraint
+from toppra.constants import JVEL_MAXSD
+
+
+def create_velocity_constraint(qs, vlim):
+    """ Evaluate coefficient matrices for velocity constraints.
+
+    A maximum allowable value for the path velocity is defined with
+    `MAXSD`. This constant results in a lower bound on trajectory
+    duration obtain by toppra.
+
+    Args:
+    ----
+    qs: ndarray
+        Path derivatives at each grid point.
+    vlim: ndarray
+        Velocity bounds.
+    
+    Returns:
+    --------
+    a: ndarray
+    b: ndarray
+    c: ndarray
+        Coefficient matrices.
+    """
+    a = np.zeros((qs.shape[0], 2), dtype=np.float64)
+    b = np.ones((qs.shape[0], 2), dtype=np.float64)
+    c = np.zeros((qs.shape[0], 2), dtype=np.float64)
+    b[:, 1] = -1
+    for i in range(qs.shape[0]):
+        sdmin = -JVEL_MAXSD
+        sdmax = JVEL_MAXSD
+        for k in range(qs.shape[1]):
+            if qs[i, k] > 0:
+                sdmax = min(vlim[k, 1] / qs[i, k], sdmax)   # \frac{\mathrm{d} s}{\mathrm{d} t} = \frac{\mathrm{d} \theta}{\mathrm{d} t} / \frac{\mathrm{d} \theta}{\mathrm{d} s}
+                sdmin = max(vlim[k, 0] / qs[i, k], sdmin)   # qdt = qds * sdt
+            elif qs[i, k] < 0:
+                sdmax = min(vlim[k, 0] / qs[i, k], sdmax)
+                sdmin = max(vlim[k, 1] / qs[i, k], sdmin)
+        c[i, 0] = - sdmax**2
+        c[i, 1] = max(sdmin, 0.)**2
+    return a, b, c
+
+
+def create_velocity_constraint_varying(qs, vlim_grid):
+    """ Evaluate coefficient matrices for velocity constraints.
+
+    Args:
+    ----
+    qs: (N,) ndarray
+        Path derivatives at each grid point.
+    vlim_grid: (N, dof, 2) ndarray
+        Velocity bounds at each grid point.
+    
+    Returns:
+    --------
+    a: ndarray
+    b: ndarray
+    c: ndarray
+        Coefficient matrices.
+    """
+    # Evaluate sdmin, sdmax at each steps and fill the matrices.
+    a = np.zeros((qs.shape[0], 2), dtype=float)
+    b = np.ones((qs.shape[0], 2), dtype=float)
+    c = np.zeros((qs.shape[0], 2), dtype=float)
+    b[:, 1] = -1
+    for i in range(qs.shape[0]):
+        sdmin = -JVEL_MAXSD
+        sdmax = JVEL_MAXSD
+        for k in range(qs.shape[1]):
+            if qs[i, k] > 0:
+                sdmax = min(vlim_grid[i, k, 1] / qs[i, k], sdmax)
+                sdmin = max(vlim_grid[i, k, 0] / qs[i, k], sdmin)
+            elif qs[i, k] < 0:
+                sdmax = min(vlim_grid[i, k, 0] / qs[i, k], sdmax)
+                sdmin = max(vlim_grid[i, k, 1] / qs[i, k], sdmin)
+        c[i, 0] = - sdmax**2
+        c[i, 1] = max(sdmin, 0.)**2
+    return a, b, c
 
 
 class JointVelocityConstraint(LinearConstraint):
@@ -47,7 +125,8 @@ class JointVelocityConstraint(LinearConstraint):
                 "Wrong dimension: constraint dof ({:d}) not equal to path dof ({:d})"
                 .format(self.get_dof(), path.dof))
         qs = path(gridpoints, 1)   # [len(gridpoints), dof], \frac{\mathrm{d} \theta}{\mathrm{d} s}, qds
-        _, _, xbound_ = _create_velocity_constraint(qs, self.vlim)  # 已知qds和qdt，计算sdt，见'cpdef _create_velocity_constraint'
+        # _, _, xbound_ = _create_velocity_constraint(qs, self.vlim)  # 已知qds和qdt，计算sdt，见'cpdef _create_velocity_constraint'
+        _, _, xbound_ = create_velocity_constraint(qs, self.vlim)
         xbound = np.array(xbound_)
         xbound[:, 0] = xbound_[:, 1]
         xbound[:, 1] = -xbound_[:, 0]
@@ -82,7 +161,7 @@ class JointVelocityConstraintVarying(LinearConstraint):
         qs = path((gridpoints), 1)
         vlim_grid = np.array([self.vlim_func(s) for s in gridpoints])
         # logging.info('vlim_grid: {}'.format(vlim_grid))
-        _, _, xbound_ = _create_velocity_constraint_varying(qs, vlim_grid)
+        _, _, xbound_ = create_velocity_constraint_varying(qs, vlim_grid)
         xbound = np.array(xbound_)
         xbound[:, 0] = xbound_[:, 1]
         xbound[:, 1] = -xbound_[:, 0]

@@ -1,3 +1,8 @@
+# 学习
+examples/plot_kinematics.py ———— 最简单的一个例子，时间最优
+examples/plot_kinematics_duration ———— 指定时间60s跑完这条路径
+
+
 # `toppra`: Time-Optimal Path Parameterization
 ![Integrate](https://github.com/hungpham2511/toppra/actions/workflows/integrate.yml/badge.svg)
 
