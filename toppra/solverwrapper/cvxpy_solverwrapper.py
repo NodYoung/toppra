@@ -65,7 +65,7 @@ class cvxpyWrapper(SolverWrapper):
             cvxpy_constraints.append(x <= x_max)
 
         if i < self.N:
-            delta = self.get_deltas()[i]
+            delta = self.get_deltas()[i]    # 两采样点之间的弧长，s_{i+1}-s_i
             if not np.isnan(x_next_min):
                 cvxpy_constraints.append(x_next_min <= x + 2 * delta * u)
             if not np.isnan(x_next_max):

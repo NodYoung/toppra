@@ -17,6 +17,7 @@ import time
 import logging
 
 ta.setup_logging("DEBUG")
+logger = logging.getLogger('toppra')
 
 ################################################################################
 # We generate a path with some random waypoints.
@@ -34,6 +35,7 @@ def generate_new_problem(seed=9):
         10 + np.random.rand(dof) * 2,
     )
 ss, way_pts, vlims, alims = generate_new_problem()
+logger.info(f'ss={ss}, way_pts={way_pts}, vlims={vlims}, alims={alims}')
 
 ################################################################################
 # Define the geometric path and two constraints.
@@ -73,3 +75,11 @@ plt.show()
 # Optionally, we can inspect the output.
 instance.compute_feasible_sets()
 instance.inspect()
+
+
+# # xlimit跟feasible set不一样
+# _, _, _, _, _, _, xlimit = pc_vel.compute_constraint_params(path, instance.gridpoints)
+# logger.info(f'xlimit={xlimit}')
+# plt.figure('xlimit')
+# plt.plot(xlimit[:, 1])
+# plt.show()

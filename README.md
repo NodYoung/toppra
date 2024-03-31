@@ -1,6 +1,9 @@
 # 学习
 examples/plot_kinematics.py ———— 最简单的一个例子，时间最优
-examples/plot_kinematics_duration ———— 指定时间60s跑完这条路径
+examples/plot_kinematics_duration.py ———— 指定时间60s跑完这条路径
+examples/test_joint_velocity.py ———— 分别使用解析公式计算和使用优化库计算sdmax和sdmin平方的对比验证
+examples/test_joint_acceleration.py ———— 关节加速度约束
+
 
 
 # `toppra`: Time-Optimal Path Parameterization

@@ -12,7 +12,7 @@ class ConstraintType(Enum):
 
     #: Unknown
     Unknown = -1
-    #: Simple linear constraints with only linear inequalities
+    #: Simple linear constraints with only linear inequalities  线性约束
     CanonicalLinear = 0
     #: Linear constraints with linear conic inequalities.
     CanonicalConic = 1

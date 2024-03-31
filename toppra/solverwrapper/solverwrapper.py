@@ -101,7 +101,7 @@ class SolverWrapper(object):
             )
             for c in self.constraints
         ]
-        self.nV = 2 + sum([c.get_no_extra_vars() for c in self.constraints])
+        self.nV = 2 + sum([c.get_no_extra_vars() for c in self.constraints])    # 这里一般就是2，self.n_extra_vars=0
 
     def get_no_stages(self):
         """Return the number of stages.

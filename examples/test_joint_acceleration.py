@@ -1,9 +1,14 @@
+import os, sys
+sys.path.insert(0, os.path.join('..'))
 import logging
 import numpy as np
 import numpy.testing as npt
 import toppra as ta
 import toppra.constraint as constraint
 from toppra.constants import JACC_MAXU
+
+ta.setup_logging("DEBUG")
+logger = logging.getLogger('toppra')
 
 def accel_constraint_setup(dof):
   if dof == 1:  # Scalar
@@ -51,15 +56,16 @@ def test_constraint_params(df):
   """ Test constraint satisfaction with cvxpy.
   """
   (path, ss, alim), accel_const = accel_constraint_setup(df)
-  logging.info('alim={}'.format(alim))
+  logger.info(f'ss={ss}, vlim={alim}')
 
   # An user of the class
   a, b, c, F, g, ubound, xbound = accel_const.compute_constraint_params(path, ss)
   assert xbound is None
+  logger.info(f'a={a}, b={b}, c={c}, F={F}, g={g}, ubound={ubound}, xbound={xbound}')
 
   N = ss.shape[0] - 1
   dof = path.dof
-  logging.info('N={}, dof={}'.format(N, dof))
+  logger.info(f'N={ss.shape[0]}, dof={path.dof}')
 
   ps = path(ss, 1)
   pss = path(ss, 2)

@@ -1,3 +1,5 @@
+import os, sys
+sys.path.insert(0, os.path.join('..'))
 import logging
 import cvxpy as cvx
 import numpy as np
@@ -6,6 +8,9 @@ import toppra as ta
 import toppra.constraint as constraint
 from toppra.constants import TINY, JVEL_MAXSD, SMALL
 from scipy.interpolate import CubicSpline
+
+ta.setup_logging("DEBUG")
+logger = logging.getLogger('toppra')
 
 def velocity_pc_data(dof):
   if dof == 2:
@@ -32,11 +37,14 @@ def test_constraint_satisfaction(dof):
   """ Test constraint satisfaction with cvxpy."""
   data, pc = velocity_pc_data(dof)
   path, ss, vlim = data
+  logger.info(f'ss={ss}, vlim={vlim}')
 
   constraint_param = pc.compute_constraint_params(path, ss)
   _, _, _, _, _, _, xlimit = constraint_param
+  logger.info(f'xlimit={xlimit}') # 路径上每个位置sdmin和sdmax的平方
 
   qs = path(ss, 1)
+  logger.info(f'qs={qs}')
   N = ss.shape[0] - 1
 
   sd = cvx.Variable()
@@ -56,9 +64,9 @@ def test_constraint_satisfaction(dof):
           xmin = sd.value ** 2
       except cvx.SolverError:
           continue
-
+      logger.info(f'i={i}, xmax={xmax}, xmin={xmin}')
       # 3. They should agree
-      npt.assert_allclose([xmin, xmax], xlimit[i], atol=SMALL)
+      npt.assert_allclose([xmin, xmax], xlimit[i], atol=SMALL)  # 使用直接解析公式计算和使用优化库计算的对比
 
       # Assert non-negativity
       assert xlimit[i, 0] >= 0

@@ -5,7 +5,9 @@ import numpy as np
 #                                  _create_velocity_constraint_varying)
 from .linear_constraint import LinearConstraint
 from toppra.constants import JVEL_MAXSD
+import toppra as ta
 
+logger = logging.getLogger('toppra')
 
 def create_velocity_constraint(qs, vlim):
     """ Evaluate coefficient matrices for velocity constraints.
@@ -44,6 +46,7 @@ def create_velocity_constraint(qs, vlim):
                 sdmin = max(vlim[k, 1] / qs[i, k], sdmin)
         c[i, 0] = - sdmax**2
         c[i, 1] = max(sdmin, 0.)**2
+    # logger.info(f'c={c}')
     return a, b, c
 
 
@@ -131,6 +134,10 @@ class JointVelocityConstraint(LinearConstraint):
         xbound[:, 0] = xbound_[:, 1]
         xbound[:, 1] = -xbound_[:, 0]
         return None, None, None, None, None, None, xbound
+        # 返回值a, b, c, F, h, ubound, xbound, 其中a.shape=[N, dof], b.shape=[N, dof], c.shape=[N, dof], F.shape=[2*dof, dof], h.shape=[2*dof], ubound.shape=[N, 2], xbound.shape=[N, 2]
+        # F * (a[i] * u + b[i] * x + c[i]) <= h, ubound[i, 0] <= u <= ubound[i, 1], xbound[i, 0] <= x <= xbound[i, 1]
+        # 具体用法可参考cvxpy_solverwrapper.py，另外见基类LinearConstraint
+        # 这里限制速度qdt，将其转换为sdt的平方，状态变量x=sdt^2, 即限制xbound
 
 
 class JointVelocityConstraintVarying(LinearConstraint):

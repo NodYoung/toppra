@@ -230,7 +230,7 @@ class ReachabilityAlgorithm(ParameterizationAlgorithm):
         g_upper[1] = -1
         x_upper = self.solver_wrapper.solve_stagewise_optim(
             i, None, g_upper, np.nan, np.nan, K_next[0], K_next[1]
-        )[1]  # min [ui, xi]*[1e-9, -1]'; s.t. K_next[0] <= xi+2*delta*ui <= K_next[1]且ux满足各种constraints
+        )[1]  # min [ui, xi]*[1e-9, -1]'（即令xi最大）; s.t. K_next[0] <= xi+2*delta*ui <= K_next[1]且ux满足各种constraints
         x_lower = self.solver_wrapper.solve_stagewise_optim(
             i, None, -g_upper, np.nan, np.nan, K_next[0], K_next[1]
         )[1]

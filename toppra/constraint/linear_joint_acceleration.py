@@ -16,7 +16,7 @@ class JointAccelerationConstraint(LinearConstraint):
                                                     &\leq \ddot{\mathbf{q}}_{max} \\\\
                 \ddot{\mathbf{q}}_{min} & \leq \mathbf{q}'(s_i) u_i + \mathbf{q}''(s_i) x_i
                                                     &\leq \ddot{\mathbf{q}}_{max}
-        qdd_min <= qdd <= qdd_max, qdd_min<=qdot_i*u_i+qddot*x_i<=qdd_max
+        即qddt_min <= qddt(=qds*u+qdds*x_i) <= qddt_max
     where :math:`u_i, x_i` are respectively the path acceleration and
     path velocity square at :math:`s_i`. For more detail see :ref:`derivationKinematics`.
 
@@ -88,6 +88,10 @@ class JointAccelerationConstraint(LinearConstraint):
                 None,
                 None,
             )
+            # 返回值a, b, c, F, h, ubound, xbound, 其中a.shape=[N, dof], b.shape=[N, dof], c.shape=[N, dof], F.shape=[2*dof, dof], h.shape=[2*dof], ubound.shape=[N, 2], xbound.shape=[N, 2]
+            # F * (a[i] * u + b[i] * x + c[i]) <= h, ubound[i, 0] <= u <= ubound[i, 1], xbound[i, 0] <= x <= xbound[i, 1]
+            # 具体用法可参考cvxpy_solverwrapper.py
+            # 这里限制加速度，qds*sdd+qdds*sd^2 = qddt_max, u=sdd, x=sd^2
         elif self.discretization_type == DiscretizationType.Interpolation:
             return canlinear_colloc_to_interpolate(
                 ps_vec,
